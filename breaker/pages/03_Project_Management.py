@@ -618,12 +618,18 @@ if st.session_state.new_task:
         col1, col2 = st.columns(2)
         
         with col1:
-            task_status = st.selectbox("Status", TASK_STATUSES, index=status_index)
-            task_category = st.selectbox("Category", TASK_CATEGORIES, index=category_index)
+            task_status = st.selectbox("Status", TASK_STATUSES, index=max(0, status_index))
+            # Ensure category_index is non-negative
+            safe_category_index = 0 if category_index < 0 else category_index
+            task_category = st.selectbox("Category", TASK_CATEGORIES, index=safe_category_index)
         
         with col2:
-            task_priority = st.selectbox("Priority", TASK_PRIORITIES, index=priority_index)
-            task_assigned_to = st.selectbox("Assigned To", ["--Select--"] + team_member_names, index=assigned_to_index + 1)
+            # Ensure priority_index is non-negative
+            safe_priority_index = 0 if priority_index < 0 else priority_index
+            task_priority = st.selectbox("Priority", TASK_PRIORITIES, index=safe_priority_index)
+            # Ensure assigned_to_index + 1 is non-negative and within range
+            safe_assigned_index = 0 if assigned_to_index < -1 else assigned_to_index + 1
+            task_assigned_to = st.selectbox("Assigned To", ["--Select--"] + team_member_names, index=safe_assigned_index)
         
         task_due_date = st.date_input("Due Date", value=due_date_value)
         
