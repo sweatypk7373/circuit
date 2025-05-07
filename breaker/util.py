@@ -1,213 +1,190 @@
-import streamlit as st
-import pandas as pd
-import json
+"""
+Utility module for the Circuit Breakers Team Hub application.
+Provides functions for data management, access control, and file operations.
+"""
+
 import os
+import json
+import hashlib
+import uuid
 from datetime import datetime
-import base64
-from io import BytesIO
+import streamlit as st
 
-# Create data directories if they don't exist
+# Create data directory if it doesn't exist
+os.makedirs("data", exist_ok=True)
+
+# Define paths for data files
+USERS_FILE = "data/users.json"
+TASKS_FILE = "data/tasks.json"
+BUILD_LOGS_FILE = "data/build_logs.json"
+RESOURCES_FILE = "data/resources.json"
+MEDIA_ITEMS_FILE = "data/media_items.json"
+MESSAGES_FILE = "data/messages.json"
+EVENTS_FILE = "data/events.json"
+SPONSORS_FILE = "data/sponsors.json"
+SETTINGS_FILE = "data/settings.json"
+
+# Initialize data directories
 def initialize_data_directories():
-    directories = [
-        "data",
-        "data/tasks",
-        "data/logs",
-        "data/resources",
-        "data/media",
-        "data/sponsors",
-        "data/events",
-        "data/messages"
-    ]
-    
-    for directory in directories:
-        os.makedirs(directory, exist_ok=True)
+    """Create all necessary directories for data storage."""
+    os.makedirs("data", exist_ok=True)
+    os.makedirs("uploads", exist_ok=True)
+    os.makedirs("uploads/resources", exist_ok=True)
+    os.makedirs("uploads/media", exist_ok=True)
+    os.makedirs("assets", exist_ok=True)
 
-# Check if user has required role
+# Role-based access control
 def check_role_access(required_roles):
-    if st.session_state.role not in required_roles:
-        st.warning(f"You don't have permission to access this section. Required role: {' or '.join(required_roles)}")
+    """Check if the current user has one of the required roles."""
+    if not st.session_state.get("authenticated", False):
+        st.warning("You must be logged in to access this page")
         return False
+    
+    user_role = st.session_state.get("role", None)
+    if user_role not in required_roles:
+        st.warning("You don't have permission to access this page")
+        return False
+    
     return True
 
-# Load a task file
+# Utility functions to read/write JSON files
+def read_json_file(file_path, default=None):
+    """Read and return data from a JSON file."""
+    if default is None:
+        default = [] if not file_path.endswith(('settings.json', 'users.json')) else {}
+        
+    try:
+        if os.path.exists(file_path) and os.path.getsize(file_path) > 0:
+            with open(file_path, 'r') as f:
+                return json.load(f)
+        return default
+    except Exception as e:
+        print(f"Error reading {file_path}: {str(e)}")
+        return default
+
+def write_json_file(file_path, data):
+    """Write data to a JSON file."""
+    try:
+        with open(file_path, 'w') as f:
+            json.dump(data, f, indent=4)
+        return True
+    except Exception as e:
+        print(f"Error writing to {file_path}: {str(e)}")
+        return False
+
+# Task management functions
 def load_tasks():
-    task_file = "data/tasks/tasks.json"
-    if not os.path.exists(task_file):
-        tasks = []
-        with open(task_file, 'w') as f:
-            json.dump(tasks, f, indent=4)
-        return tasks
-    
-    with open(task_file, 'r') as f:
-        return json.load(f)
+    """Load tasks from JSON file."""
+    return read_json_file(TASKS_FILE)
 
-# Save tasks to file
 def save_tasks(tasks):
-    task_file = "data/tasks/tasks.json"
-    with open(task_file, 'w') as f:
-        json.dump(tasks, f, indent=4)
+    """Save tasks to JSON file."""
+    return write_json_file(TASKS_FILE, tasks)
 
-# Load build log entries
+# Build logs functions
 def load_logs():
-    log_file = "data/logs/build_logs.json"
-    if not os.path.exists(log_file):
-        logs = []
-        with open(log_file, 'w') as f:
-            json.dump(logs, f, indent=4)
-        return logs
-    
-    with open(log_file, 'r') as f:
-        return json.load(f)
+    """Load build logs from JSON file."""
+    return read_json_file(BUILD_LOGS_FILE)
 
-# Save build log entries
 def save_logs(logs):
-    log_file = "data/logs/build_logs.json"
-    with open(log_file, 'w') as f:
-        json.dump(logs, f, indent=4)
+    """Save build logs to JSON file."""
+    return write_json_file(BUILD_LOGS_FILE, logs)
 
-# Load resources/documents
+# Resource management functions
 def load_resources():
-    resource_file = "data/resources/resources.json"
-    if not os.path.exists(resource_file):
-        resources = []
-        with open(resource_file, 'w') as f:
-            json.dump(resources, f, indent=4)
-        return resources
-    
-    with open(resource_file, 'r') as f:
-        return json.load(f)
+    """Load resources from JSON file."""
+    return read_json_file(RESOURCES_FILE)
 
-# Save resources/documents
 def save_resources(resources):
-    resource_file = "data/resources/resources.json"
-    with open(resource_file, 'w') as f:
-        json.dump(resources, f, indent=4)
+    """Save resources to JSON file."""
+    return write_json_file(RESOURCES_FILE, resources)
 
-# Load media items
+# Media management functions
 def load_media():
-    media_file = "data/media/media_items.json"
-    if not os.path.exists(media_file):
-        media_items = []
-        with open(media_file, 'w') as f:
-            json.dump(media_items, f, indent=4)
-        return media_items
-    
-    with open(media_file, 'r') as f:
-        return json.load(f)
+    """Load media items from JSON file."""
+    return read_json_file(MEDIA_ITEMS_FILE)
 
-# Save media items
 def save_media(media_items):
-    media_file = "data/media/media_items.json"
-    with open(media_file, 'w') as f:
-        json.dump(media_items, f, indent=4)
+    """Save media items to JSON file."""
+    return write_json_file(MEDIA_ITEMS_FILE, media_items)
 
-# Load sponsors
+# Sponsor management functions
 def load_sponsors():
-    sponsor_file = "data/sponsors/sponsors.json"
-    if not os.path.exists(sponsor_file):
-        sponsors = []
-        with open(sponsor_file, 'w') as f:
-            json.dump(sponsors, f, indent=4)
-        return sponsors
-    
-    with open(sponsor_file, 'r') as f:
-        return json.load(f)
+    """Load sponsors from JSON file."""
+    return read_json_file(SPONSORS_FILE)
 
-# Save sponsors
 def save_sponsors(sponsors):
-    sponsor_file = "data/sponsors/sponsors.json"
-    with open(sponsor_file, 'w') as f:
-        json.dump(sponsors, f, indent=4)
+    """Save sponsors to JSON file."""
+    return write_json_file(SPONSORS_FILE, sponsors)
 
-# Load events
+# Event management functions
 def load_events():
-    event_file = "data/events/events.json"
-    if not os.path.exists(event_file):
-        events = []
-        with open(event_file, 'w') as f:
-            json.dump(events, f, indent=4)
-        return events
-    
-    with open(event_file, 'r') as f:
-        return json.load(f)
+    """Load events from JSON file."""
+    return read_json_file(EVENTS_FILE)
 
-# Save events
 def save_events(events):
-    event_file = "data/events/events.json"
-    with open(event_file, 'w') as f:
-        json.dump(events, f, indent=4)
+    """Save events to JSON file."""
+    return write_json_file(EVENTS_FILE, events)
 
-# Load team members
+# Team member management functions
 def load_team_members():
-    user_data_file = "data/users.json"
-    if not os.path.exists(user_data_file):
-        return []
+    """Load team members from users JSON file."""
+    users = read_json_file(USERS_FILE)
+    team_members = []
     
-    with open(user_data_file, 'r') as f:
-        user_data = json.load(f)
-    
-    members = []
-    for username, data in user_data.items():
-        member = {
+    for username, user_data in users.items():
+        team_members.append({
             "username": username,
-            "name": data["name"],
-            "role": data["role"],
-            "email": data["email"]
-        }
-        members.append(member)
+            "name": user_data.get("name", ""),
+            "role": user_data.get("role", "member"),
+            "email": user_data.get("email", ""),
+            "department": user_data.get("department", ""),
+            "created_at": user_data.get("created_at", datetime.now().isoformat())
+        })
     
-    return members
+    return team_members
 
-# Load messages
+# Message management functions
 def load_messages():
-    message_file = "data/messages/messages.json"
-    if not os.path.exists(message_file):
-        messages = []
-        with open(message_file, 'w') as f:
-            json.dump(messages, f, indent=4)
-        return messages
-    
-    with open(message_file, 'r') as f:
-        return json.load(f)
+    """Load messages from JSON file."""
+    return read_json_file(MESSAGES_FILE)
 
-# Save messages
 def save_messages(messages):
-    message_file = "data/messages/messages.json"
-    with open(message_file, 'w') as f:
-        json.dump(messages, f, indent=4)
+    """Save messages to JSON file."""
+    return write_json_file(MESSAGES_FILE, messages)
 
-# Format date from ISO format to user-friendly display
+# Helper functions
 def format_date(iso_date):
-    date_obj = datetime.fromisoformat(iso_date)
-    return date_obj.strftime("%m/%d/%Y %I:%M %p")
+    """Format ISO date string to a more readable format."""
+    try:
+        date_obj = datetime.fromisoformat(iso_date.replace('Z', '+00:00'))
+        return date_obj.strftime("%b %d, %Y")
+    except:
+        return iso_date
 
-# Generate a task ID
 def generate_id():
-    return datetime.now().strftime("%Y%m%d%H%M%S")
+    """Generate a unique ID for database records."""
+    return str(uuid.uuid4())
 
-# Load SVG file
 def load_svg(svg_path):
-    # Create a default SVG for Circuit Breakers logo if file doesn't exist
-    if not os.path.exists(svg_path):
-        os.makedirs(os.path.dirname(svg_path), exist_ok=True)
-        default_svg = """
-        <svg width="200" height="200" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="100" cy="100" r="90" fill="#1f1f1f" stroke="#00B4D8" stroke-width="5"/>
-            <text x="100" y="90" font-family="Arial" font-size="18" fill="#00B4D8" text-anchor="middle">CIRCUIT</text>
-            <text x="100" y="115" font-family="Arial" font-size="18" fill="#00B4D8" text-anchor="middle">BREAKERS</text>
+    """Load an SVG file as a string."""
+    try:
+        if os.path.exists(svg_path):
+            with open(svg_path, 'r') as f:
+                return f.read()
+        return """<svg width="200" height="200" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="100" cy="100" r="90" fill="#f1f1f1" stroke="#0084D8" stroke-width="5"/>
+            <text x="100" y="90" font-family="Arial" font-size="18" fill="#0084D8" text-anchor="middle">CIRCUIT</text>
+            <text x="100" y="115" font-family="Arial" font-size="18" fill="#0084D8" text-anchor="middle">BREAKERS</text>
             <path d="M80,130 L95,150 L110,130 L125,150" stroke="#C0C0C0" stroke-width="4" fill="none"/>
-            <path d="M60,120 L140,120" stroke="#00B4D8" stroke-width="3" fill="none"/>
-            <path d="M70,60 L130,60" stroke="#00B4D8" stroke-width="3" fill="none"/>
-            <path d="M90,60 L90,120" stroke="#00B4D8" stroke-width="3" fill="none"/>
-            <path d="M110,60 L110,120" stroke="#00B4D8" stroke-width="3" fill="none"/>
-        </svg>
-        """
-        with open(svg_path, 'w') as f:
-            f.write(default_svg.strip())
-        return default_svg
-    
-    with open(svg_path, 'r') as f:
-        return f.read()
-
-# Initialize data directories when module is imported
-initialize_data_directories()
+            <path d="M60,120 L140,120" stroke="#0084D8" stroke-width="3" fill="none"/>
+            <path d="M70,60 L130,60" stroke="#0084D8" stroke-width="3" fill="none"/>
+            <path d="M90,60 L90,120" stroke="#0084D8" stroke-width="3" fill="none"/>
+            <path d="M110,60 L110,120" stroke="#0084D8" stroke-width="3" fill="none"/>
+        </svg>"""
+    except Exception as e:
+        print(f"Error loading SVG: {str(e)}")
+        return """<svg width="150" height="50" xmlns="http://www.w3.org/2000/svg">
+            <rect width="150" height="50" fill="#0084D8"/>
+            <text x="75" y="30" font-family="Arial" font-size="16" fill="white" text-anchor="middle">Circuit Breakers</text>
+        </svg>"""
