@@ -61,36 +61,55 @@ def get_user_data_file():
 
 def load_users():
     global users
-
-    # ... (database loading logic) ...
-
+    
+    # Only try database if available
+    if database_available:
+        try:
+            # First try to load from database
+            db = SessionLocal()
+            try:
+                # Load users from database
+                db_users = db.query(User).all()
+                
+                # Create dictionary structure
+                users_dict = {}
+                for db_user in db_users:
+                    users_dict[db_user.username] = {
+                        'name': db_user.name,
+                        'email': db_user.email,
+                        'role': db_user.role,
+                        'password': db_user.password,
+                        'department': db_user.department,
+                        'created_at': db_user.created_at.isoformat() if db_user.created_at else datetime.now().isoformat()
+                    }
+                
+                # If database has users, return them
+                if users_dict:
+                    return users_dict
+            except Exception as e:
+                st.warning(f"Error loading users from database: {str(e)}. Falling back to JSON file.")
+            finally:
+                db.close()
+        except:
+            pass
+    
     # As fallback, load from JSON file
-    # Ensure the data directory and 'user' subdirectory exist
-    os.makedirs(USER_SUBDIR, exist_ok=True)
-    if not os.path.exists(USER_DATA_FILE):
-        # ... (handling for non-existent file) ...
-        with open(USER_DATA_FILE, 'w') as f:
+    user_data_file = get_user_data_file()
+    if not os.path.exists(user_data_file):
+        # If file doesn't exist, return default admin user
+        default_users = {
+            "admin": {
+                "name": "Administrator",
+                "email": "admin@example.com",
+                "role": "admin",
+                "password": hashlib.sha256("admin123".encode()).hexdigest(),
+                "department": "Management",
+                "created_at": datetime.now().isoformat()
+            }
+        }
+        # Save default users to file
+        with open(user_data_file, 'w') as f:
             json.dump(default_users, f, indent=4)
-        return default_users
-
-    try:
-        with open(USER_DATA_FILE, 'r') as f:
-            return json.load(f)
-    except Exception as e:
-        st.error(f"Error loading user data: {str(e)}")
-        return {}
-
-def save_users(user_data):
-    global users
-    users = user_data
-
-    # Save to JSON file
-    # Ensure the data directory and 'user' subdirectory exist
-    os.makedirs(USER_SUBDIR, exist_ok=True)
-    with open(USER_DATA_FILE, 'w') as f:
-        json.dump(user_data, f, indent=4)
-
-    # ... (database saving logic) ...
         return default_users
     
     try:
