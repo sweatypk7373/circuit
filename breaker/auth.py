@@ -22,7 +22,7 @@ def initialize_user_data():
         default_users = {
             "admin": {
                 "password": hash_password("admin123"),
-                "name": "Admin User",
+                "name": "admin",
                 "role": "admin",
                 "email": "admin@circuitbreakers.org",
                 "created_at": datetime.now().isoformat(),
