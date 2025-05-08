@@ -7,13 +7,13 @@ import random
 def initialize_demo_data():
     # Create directories
     os.makedirs("data", exist_ok=True)
-    os.makedirs("data/tasks", exist_ok=True)
-    os.makedirs("data/logs", exist_ok=True)
-    os.makedirs("data/resources", exist_ok=True)
-    os.makedirs("data/media", exist_ok=True)
-    os.makedirs("data/sponsors", exist_ok=True)
-    os.makedirs("data/events", exist_ok=True)
-    os.makedirs("data/messages", exist_ok=True)
+    os.makedirs("breaker/data/tasks", exist_ok=True)
+    os.makedirs("breaker/data/logs", exist_ok=True)
+    os.makedirs("breaker/data/resources", exist_ok=True)
+    os.makedirs("breaker/data/media", exist_ok=True)
+    os.makedirs("breaker/data/sponsors", exist_ok=True)
+    os.makedirs("breaker/data/events", exist_ok=True)
+    os.makedirs("breaker/data/messages", exist_ok=True)
     
     # Sample team members
     team_members = ["Alex Johnson", "Maria Garcia", "Jamal Williams", "Sarah Chen", 
