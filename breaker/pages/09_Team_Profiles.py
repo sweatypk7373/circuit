@@ -59,7 +59,7 @@ def get_user_data_file():
     data_dir = "data"
     if not os.path.exists(data_dir):
         os.makedirs(data_dir)
-    return os.path.join(data_dir, "users.json")
+    return os.path.join(data_dir, "breaker/users.json")
 
 
 def load_users():
