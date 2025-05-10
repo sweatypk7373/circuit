@@ -7,6 +7,90 @@
         "department": null,
         "created_at": "2025-05-06T14:05:36.487988"
     },
+    "jaymann": {
+        "name": "Jaymann Taneja",
+        "email": "circuitbreaker.nps@gmail.com",
+        "role": "member",
+        "password": "jaymann123",
+        "department": "Media",
+        "bio": "",
+        "skills": [],
+        "created_at": "2025-05-06T14:36:49.233811"
+    }
+}
+},
+    "tejas": {
+        "name": "Tejas kurmala",
+        "email": "circuitbreaker.nps@gmail.com",
+        "role": "member",
+        "password": "tejas123",
+        "department": "Management",
+        "bio": "",
+        "skills": [],
+        "created_at": "2025-05-06T14:36:49.233811"
+    }
+}
+},
+    "moku": {
+        "name": "Mokshith Talasila",
+        "email": "circuitbreaker.nps@gmail.com",
+        "role": "lead",
+        "password": "103a8c45044a6886f712135cac43bf5f4223bf40b83e2df51d24fcc3ee9f69f4",
+        "department": "Management",
+        "bio": "",
+        "skills": [],
+        "created_at": "2025-05-06T14:36:49.233811"
+    }
+}
+},
+    "moku": {
+        "name": "Mokshith Talasila",
+        "email": "circuitbreaker.nps@gmail.com",
+        "role": "lead",
+        "password": "103a8c45044a6886f712135cac43bf5f4223bf40b83e2df51d24fcc3ee9f69f4",
+        "department": "Management",
+        "bio": "",
+        "skills": [],
+        "created_at": "2025-05-06T14:36:49.233811"
+    }
+}
+},
+    "moku": {
+        "name": "Mokshith Talasila",
+        "email": "circuitbreaker.nps@gmail.com",
+        "role": "lead",
+        "password": "103a8c45044a6886f712135cac43bf5f4223bf40b83e2df51d24fcc3ee9f69f4",
+        "department": "Management",
+        "bio": "",
+        "skills": [],
+        "created_at": "2025-05-06T14:36:49.233811"
+    }
+}
+},
+    "moku": {
+        "name": "Mokshith Talasila",
+        "email": "circuitbreaker.nps@gmail.com",
+        "role": "lead",
+        "password": "103a8c45044a6886f712135cac43bf5f4223bf40b83e2df51d24fcc3ee9f69f4",
+        "department": "Management",
+        "bio": "",
+        "skills": [],
+        "created_at": "2025-05-06T14:36:49.233811"
+    }
+}
+},
+    "moku": {
+        "name": "Mokshith Talasila",
+        "email": "circuitbreaker.nps@gmail.com",
+        "role": "lead",
+        "password": "103a8c45044a6886f712135cac43bf5f4223bf40b83e2df51d24fcc3ee9f69f4",
+        "department": "Management",
+        "bio": "",
+        "skills": [],
+        "created_at": "2025-05-06T14:36:49.233811"
+    }
+}
+},
     "moku": {
         "name": "Mokshith Talasila",
         "email": "circuitbreaker.nps@gmail.com",
