@@ -336,7 +336,7 @@ with tab2:
                         if reset_password:
                             users[edit_username]['password'] = hash_password(new_password)
                         
-                        save_users(users)
+                        save_users(breaker/data/users.json)
                         
                         st.success(f"User '{edit_username}' updated successfully!")
                         st.rerun()
