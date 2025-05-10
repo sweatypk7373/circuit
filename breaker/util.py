@@ -14,15 +14,15 @@ import streamlit as st
 os.makedirs("data", exist_ok=True)
 
 # Define paths for data files
-USERS_FILE = "breaker/data/users.json"
-TASKS_FILE = "breaker/data/tasks/tasks.json"
-BUILD_LOGS_FILE = "breaker/data/logs/build_logs.json"
-RESOURCES_FILE = "breaker/data/resources/resources.json"
-MEDIA_ITEMS_FILE = "breaker/data/media/media_items.json"
-MESSAGES_FILE = "breaker/data/messages/messages.json"
-EVENTS_FILE = "breaker/data/events/events.json"
-SPONSORS_FILE = "breaker/data/sponsers/sponsors.json"
-SETTINGS_FILE = "breaker/data/settings.json"
+USERS_FILE = "data/users.json"
+TASKS_FILE = "data/tasks.json"
+BUILD_LOGS_FILE = "data/build_logs.json"
+RESOURCES_FILE = "data/resources.json"
+MEDIA_ITEMS_FILE = "data/media_items.json"
+MESSAGES_FILE = "data/messages.json"
+EVENTS_FILE = "data/events.json"
+SPONSORS_FILE = "data/sponsors.json"
+SETTINGS_FILE = "data/settings.json"
 
 # Initialize data directories
 def initialize_data_directories():
